@@ -1,14 +1,14 @@
 version: '3.9'
 
-networks:
-  app-network:
+#networks:
+  #app-network:
     #driver: bridge
 
 services:
     #dotnet
     webapp:
-      network_mode: host;
-      image: webbapp:1.13
+      #network_mode: host;
+      image: webbapp:1.15
       #build: 
         #context: .
         #dockerfile: dockerfile
@@ -17,8 +17,8 @@ services:
       - proxy
       - sqldb
       - mongodb
-      networks:
-        - app-network
+     # networks:
+       # - app-network
       ports:
         - "5001:5001"
     #nginx
@@ -36,11 +36,15 @@ services:
       image: mariadb:10.4.21
       environment:
         MYSQL_ROOT_PASSWORD: root
-      networks:
-        - app-network
+    #  networks:
+     #   - app-network
     #mongodb
     mongodb:
       image: mongo:4.4.8
-      networks:
-        - app-network
+      container_name: mongo
+      ports:
+        - 27017:27017
+
+     # networks:
+       # - app-network
 
