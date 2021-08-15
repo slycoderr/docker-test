@@ -44,14 +44,20 @@ namespace webapp
                 {
                     await context.Response.WriteAsync($"hello world");
                 });
-                endpoints.MapGet("/db", async context =>
+                endpoints.MapGet("/mongo", async context =>
                 {
-                    var client = new MongoClient("mongodb://localhost:27017");
+                    var client = new MongoClient("mongodb://mongo:27017");
                     var database = client.GetDatabase("test");
                     var collection = database.GetCollection<BsonDocument>("123");
                     var collections = database.ListCollectionNames().ToList();
-                    var sqlDbs = new List<string>();
                     var mongo = $"<p>{string.Join(',', collections)}</p>";
+
+                    await context.Response.WriteAsync($"{mongo}");
+                });
+
+                endpoints.MapGet("/sql", async context =>
+                {
+                    var sqlDbs = new List<string>();
 
                     using (var conn = new MySqlConnection("server=127.0.0.1;uid=root;pwd=root"))
                     {
@@ -75,7 +81,7 @@ namespace webapp
 
                     var sql = $"<p>{string.Join(',', sqlDbs)}</p>";
 
-                    await context.Response.WriteAsync($"{sql}{mongo}");
+                    await context.Response.WriteAsync(sql);
                 });
             });
         }
