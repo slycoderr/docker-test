@@ -7,7 +7,8 @@ networks:
 services:
     #dotnet
     webapp:
-      image: webbapp:1.12
+      network_mode: host;
+      image: webbapp:1.13
       #build: 
         #context: .
         #dockerfile: dockerfile
