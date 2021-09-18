@@ -46,21 +46,22 @@ namespace webapp
                 });
                 endpoints.MapGet("/mongo", async context =>
                 {
-                    var client = new MongoClient("mongodb://mongo:27017");
-                    var database = client.GetDatabase("test");
+                    var client = new MongoClient("mongodb://mongodb:27017");
+                    var database = client.GetDatabase("test123123");
                     var collection = database.GetCollection<BsonDocument>("123");
-                    var collections = database.ListCollectionNames().ToList();
-                    var mongo = $"<p>{string.Join(',', collections)}</p>";
+                    collection.InsertOne(new BsonDocument{{"test", 123123}});
 
-                    await context.Response.WriteAsync($"{mongo}");
+                    await context.Response.WriteAsync($"{collection.CountDocuments(Builders<BsonDocument>.Filter.Empty)}");
                 });
 
                 endpoints.MapGet("/sql", async context =>
                 {
                     var sqlDbs = new List<string>();
 
-                    using (var conn = new MySqlConnection("server=127.0.0.1;uid=root;pwd=root"))
+                    using (var conn = new MySqlConnection("sslmode=none;server=sqldb;uid=root;pwd=root"))
                     {
+                        await conn.OpenAsync();
+
                         using (var command = conn.CreateCommand())
                         {
                             command.CommandText = "create database if not exists testdb;";
@@ -79,7 +80,7 @@ namespace webapp
                         }
                     }
 
-                    var sql = $"<p>{string.Join(',', sqlDbs)}</p>";
+                    var sql = $"<p>{string.Join(", ", sqlDbs)}</p>";
 
                     await context.Response.WriteAsync(sql);
                 });
